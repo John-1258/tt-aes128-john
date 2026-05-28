@@ -9,7 +9,7 @@ VERILOG_STANDARD ?= -g2009
 SRC_DIR = $(PWD)/../src
 
 # Verilog sources
-VERILOG_SOURCES = $(SRC_DIR)/tt_AES128.v \
+VERILOG_SOURCES = $(SRC_DIR)/tt_um_AES128.v \
                   $(SRC_DIR)/addroundkey.v \
                   $(SRC_DIR)/mixcolumns_one_column.v \
                   $(SRC_DIR)/rcon.v \
