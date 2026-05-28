@@ -85,14 +85,9 @@ async def wait_done(dut, max_cycles=200):
         await Timer(1, units="ns")
 
         status = int(dut.uo_out.value)
-        busy = status & 0x01
-        done = (status >> 1) & 0x01
+        dut._log.info(f"cycle={cycle}, status=0x{status:02x}")
 
-        dut._log.info(
-            f"cycle={cycle}, status=0x{status:02x}, busy={busy}, done={done}"
-        )
-
-        if done == 1:
+        if status == 0x01:
             dut._log.info("AES encryption completed")
             return
 
