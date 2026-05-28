@@ -68,8 +68,8 @@ module aes128_top_test;
         #(CLK_PERIOD);
 
         // Open files
-        data_in_file = $fopen("vectors/data_in.txt", "r");
-        key_file = $fopen("vectors/key_in.txt", "r");
+        data_in_file     = $fopen("vectors/data_in.txt", "r");
+        key_file         = $fopen("vectors/key_in.txt",  "r");
         expected_out_file = $fopen("vectors/data_out.txt", "r");
 
         if (data_in_file == 0 || key_file == 0 || expected_out_file == 0) begin
@@ -77,82 +77,84 @@ module aes128_top_test;
             $finish;
         end
 
+        // Seed scan vars so while condition is valid on first evaluation
         scan_data = 1; scan_key = 1; scan_exp = 1;
 
         // Read and process each test vector
         while (!$feof(data_in_file) && !$feof(key_file) && !$feof(expected_out_file)
                && scan_data == 1 && scan_key == 1 && scan_exp == 1) begin
 
-            scan_data = $fscanf(data_in_file, "%h", data_in_vec);
-            scan_key  = $fscanf(key_file,     "%h", key_vec);
-            scan_exp  = $fscanf(expected_out_file, "%h", expected_out_vec);
+            // Read hex values from files
+            scan_data = $fscanf(data_in_file,      "%h", data_in_vec);
+            scan_key  = $fscanf(key_file,           "%h", key_vec);
+            scan_exp  = $fscanf(expected_out_file,  "%h", expected_out_vec);
 
-            if (scan_data != 1 || scan_key != 1 || scan_exp != 1) begin
-                break;
-            end
+            if (scan_data == 1 && scan_key == 1 && scan_exp == 1) begin
 
-            // Load key bytes
-            for (i = 0; i < 16; i = i + 1) begin
-                uio_in = 8'b0;
-                uio_in[5] = 1'b1;
-                uio_in[4:0] = i;
-                ui_in = key_vec[127 - i*8 -: 8];
-                #(CLK_PERIOD);
-            end
-            uio_in = 8'b0;
-            #(CLK_PERIOD);
-
-            // Load plaintext bytes
-            for (i = 0; i < 16; i = i + 1) begin
-                uio_in = 8'b0;
-                uio_in[5] = 1'b1;
-                uio_in[4:0] = 16 + i;
-                ui_in = data_in_vec[127 - i*8 -: 8];
-                #(CLK_PERIOD);
-            end
-            uio_in = 8'b0;
-            #(CLK_PERIOD);
-
-            // Pulse start
-            uio_in[6] = 1'b1;
-            #(CLK_PERIOD);
-            uio_in[6] = 1'b0;
-            #(CLK_PERIOD);
-
-            // Wait for done flag (uo_out[0] = done bit)
-            wait(uo_out[0] == 1'b1);
-            #(CLK_PERIOD);
-
-            // Read and verify cipher bytes (MSB first)
-            for (i = 0; i < 16; i = i + 1) begin
-                uio_in = 8'b0;
-                uio_in[7] = 1'b1;
-                uio_in[4:0] = i;
-                #(CLK_PERIOD);
-
-                expected_byte = expected_out_vec[127 - i*8 -: 8];
-                actual_byte = uo_out;
-
-                if (actual_byte != expected_byte) begin
-                    $display("MISMATCH byte %d: expected %h, got %h", i, expected_byte, actual_byte);
-                end else begin
-                    $display("MATCHED byte %d: expected %h, got %h", i, expected_byte, actual_byte);
+                // Load key bytes
+                for (i = 0; i < 16; i = i + 1) begin
+                    uio_in = 8'b0;
+                    uio_in[5] = 1'b1;
+                    uio_in[4:0] = i;
+                    ui_in = key_vec[127 - i*8 -: 8];
+                    #(CLK_PERIOD);
                 end
-            end
+                uio_in = 8'b0;
+                #(CLK_PERIOD);
 
-            // Prepare for next vector
-            uio_in = 8'b0;
-            #(CLK_PERIOD);
+                // Load plaintext bytes
+                for (i = 0; i < 16; i = i + 1) begin
+                    uio_in = 8'b0;
+                    uio_in[5] = 1'b1;
+                    uio_in[4:0] = 16 + i;
+                    ui_in = data_in_vec[127 - i*8 -: 8];
+                    #(CLK_PERIOD);
+                end
+                uio_in = 8'b0;
+                #(CLK_PERIOD);
 
-            vec_count = vec_count + 1;
-        end
+                // Pulse start
+                uio_in[6] = 1'b1;
+                #(CLK_PERIOD);
+                uio_in[6] = 1'b0;
+                #(CLK_PERIOD);
+
+                // Wait for done flag (uo_out[0] = done bit)
+                wait(uo_out[0] == 1'b1);
+                #(CLK_PERIOD);
+
+                // Read and verify cipher bytes (MSB first)
+                for (i = 0; i < 16; i = i + 1) begin
+                    uio_in = 8'b0;
+                    uio_in[7] = 1'b1;
+                    uio_in[4:0] = i;
+                    #(CLK_PERIOD);
+
+                    expected_byte = expected_out_vec[127 - i*8 -: 8];
+                    actual_byte   = uo_out;
+
+                    if (actual_byte != expected_byte) begin
+                        $display("MISMATCH byte %0d: expected %h, got %h", i, expected_byte, actual_byte);
+                    end else begin
+                        $display("MATCHED  byte %0d: expected %h, got %h", i, expected_byte, actual_byte);
+                    end
+                end
+
+                // Prepare for next vector
+                uio_in = 8'b0;
+                #(CLK_PERIOD);
+
+                vec_count = vec_count + 1;
+
+            end // if scan
+        end // while
 
         // Close files
         $fclose(data_in_file);
         $fclose(key_file);
         $fclose(expected_out_file);
 
-        $display("Done: %d vectors tested", vec_count);
+        $display("Done: %0d vectors tested", vec_count);
         sim_done = 1'b1;
         #(CLK_PERIOD * 10);
         $finish;
