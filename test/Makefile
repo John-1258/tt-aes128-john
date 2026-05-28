@@ -1,15 +1,25 @@
 # Makefile
-# VHDL testbench for AES128 design
+# Verilog testbench for AES128 design
 
-SIM ?= ghdl
-VHDL_STANDARD ?= 08
+SIM ?= iverilog
+VVP ?= vvp
+VERILOG_STANDARD ?= -g2009
 
 # Source directory
 SRC_DIR = $(PWD)/../src
 
-# VHDL sources
-VHDL_SOURCES = $(SRC_DIR)/tt_AES128.vhd
-TB_VHDL = $(PWD)/AES128_tb.vhd
+# Verilog sources
+VERILOG_SOURCES = $(SRC_DIR)/tt_AES128.v \
+                  $(SRC_DIR)/addroundkey.v \
+                  $(SRC_DIR)/mixcolumns_one_column.v \
+                  $(SRC_DIR)/rcon.v \
+                  $(SRC_DIR)/rotword.v \
+                  $(SRC_DIR)/sbox.v \
+                  $(SRC_DIR)/shiftrows.v \
+                  $(SRC_DIR)/subbyte.v \
+                  $(SRC_DIR)/subword.v
+
+TB_VERILOG = $(PWD)/AES128_tb.v
 
 # Test vectors directory
 VECTORS_DIR = $(PWD)/vectors
@@ -17,33 +27,19 @@ VECTORS_DIR = $(PWD)/vectors
 # Output directory
 SIM_DIR = sim_build
 
-# GHDL flags
-GHDL_FLAGS = --std=$(VHDL_STANDARD) -g
-
 # Default target
 all: compile run
 
 compile:
-	@echo "Compiling VHDL files..."
-	ghdl analyze $(GHDL_FLAGS) $(VHDL_SOURCES) $(TB_VHDL)
+	@echo "Compiling Verilog files..."
+	$(SIM) $(VERILOG_STANDARD) -o $(SIM_DIR)/tb $(VERILOG_SOURCES) $(TB_VERILOG)
 
-elaborate:
-	@echo "Elaborating design..."
-	ghdl elaborate $(GHDL_FLAGS) aes128_top_test -o $(SIM_DIR)/tb
-
-run: elaborate
+run: compile
 	@echo "Running simulation..."
-	ghdl run $(GHDL_FLAGS) aes128_top_test \
-		--vcd=$(SIM_DIR)/tb.vcd \
-		--stop-time=10ms
-
-view:
-	@echo "Opening waveform viewer..."
-	gtkwave $(SIM_DIR)/tb.vcd &
+	$(VVP) $(SIM_DIR)/tb
 
 clean:
 	@echo "Cleaning up..."
 	rm -rf $(SIM_DIR)
-	ghdl clean
 
-.PHONY: all compile elaborate run view clean
+.PHONY: all compile run clean
