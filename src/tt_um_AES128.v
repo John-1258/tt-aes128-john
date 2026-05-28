@@ -179,17 +179,15 @@ module tt_um_AES128 (
 	    end
 	end
 	
-	// sends out encrypted
-   always @(*) begin
-        if (done_q && output_sel)
-            uo_out = encrypted_reg[byte_index[3:0]];
-        else if (done_q)
-            uo_out = 8'h01;
-        else
-            uo_out = 8'h00;				
-   end
-
-	assign uio_out = {6'd0, done_q, busy_q};
-   assign uio_oe  = 8'd0;
-
+	// sends out encrypted or status
+	always @(*) begin
+	    if (output_sel) begin
+	        uo_out = encrypted_reg[byte_index[3:0]];
+	    end else begin
+	        uo_out = {6'd0, done_q, busy_q};
+	    end
+	end
+	
+	assign uio_out = 8'd0;
+	assign uio_oe  = 8'd0;
 endmodule
