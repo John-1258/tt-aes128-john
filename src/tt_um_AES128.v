@@ -77,10 +77,53 @@ module tt_um_AES128 (
     // using ui_in to input key and plaintext
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            for (i = 0; i < 16; i = i+1) begin
-                key_reg[i] <= 8'd0;
-                plaintext_reg[i] <= 8'd0;
-            end
+			key_reg[0]       <= 8'd0;
+			plaintext_reg[0] <= 8'd0;
+			
+			key_reg[1]       <= 8'd0;
+			plaintext_reg[1] <= 8'd0;
+			
+			key_reg[2]       <= 8'd0;
+			plaintext_reg[2] <= 8'd0;
+			
+			key_reg[3]       <= 8'd0;
+			plaintext_reg[3] <= 8'd0;
+			
+			key_reg[4]       <= 8'd0;
+			plaintext_reg[4] <= 8'd0;
+			
+			key_reg[5]       <= 8'd0;
+			plaintext_reg[5] <= 8'd0;
+			
+			key_reg[6]       <= 8'd0;
+			plaintext_reg[6] <= 8'd0;
+			
+			key_reg[7]       <= 8'd0;
+			plaintext_reg[7] <= 8'd0;
+			
+			key_reg[8]       <= 8'd0;
+			plaintext_reg[8] <= 8'd0;
+			
+			key_reg[9]       <= 8'd0;
+			plaintext_reg[9] <= 8'd0;
+			
+			key_reg[10]      <= 8'd0;
+			plaintext_reg[10]<= 8'd0;
+			
+			key_reg[11]      <= 8'd0;
+			plaintext_reg[11]<= 8'd0;
+			
+			key_reg[12]      <= 8'd0;
+			plaintext_reg[12]<= 8'd0;
+			
+			key_reg[13]      <= 8'd0;
+			plaintext_reg[13]<= 8'd0;
+			
+			key_reg[14]      <= 8'd0;
+			plaintext_reg[14]<= 8'd0;
+			
+			key_reg[15]      <= 8'd0;
+			plaintext_reg[15]<= 8'd0;
         end else if (we) begin
             if (byte_index < 5'd16)
                 key_reg[byte_index] <= ui_in;
@@ -99,15 +142,43 @@ module tt_um_AES128 (
 
 	// gets encrypted
 	always @(posedge clk or negedge rst_n) begin
-		 if (!rst_n) begin
-			 for (m = 0; m < 16; m = m+1)
-					encrypted_reg[i] <= 8'd0;
-		 end else if (done_w_d) begin
-			 for (k = 0; k < 16; k = k+1)
-					encrypted_reg[i] <= encrypted_wire[i];
-		 end
+	    if (!rst_n) begin
+	        encrypted_reg[0]  <= 8'd0;
+	        encrypted_reg[1]  <= 8'd0;
+	        encrypted_reg[2]  <= 8'd0;
+	        encrypted_reg[3]  <= 8'd0;
+	        encrypted_reg[4]  <= 8'd0;
+	        encrypted_reg[5]  <= 8'd0;
+	        encrypted_reg[6]  <= 8'd0;
+	        encrypted_reg[7]  <= 8'd0;
+	        encrypted_reg[8]  <= 8'd0;
+	        encrypted_reg[9]  <= 8'd0;
+	        encrypted_reg[10] <= 8'd0;
+	        encrypted_reg[11] <= 8'd0;
+	        encrypted_reg[12] <= 8'd0;
+	        encrypted_reg[13] <= 8'd0;
+	        encrypted_reg[14] <= 8'd0;
+	        encrypted_reg[15] <= 8'd0;
+	    end else if (done_w_d) begin
+	        encrypted_reg[0]  <= encrypted_wire[0];
+	        encrypted_reg[1]  <= encrypted_wire[1];
+	        encrypted_reg[2]  <= encrypted_wire[2];
+	        encrypted_reg[3]  <= encrypted_wire[3];
+	        encrypted_reg[4]  <= encrypted_wire[4];
+	        encrypted_reg[5]  <= encrypted_wire[5];
+	        encrypted_reg[6]  <= encrypted_wire[6];
+	        encrypted_reg[7]  <= encrypted_wire[7];
+	        encrypted_reg[8]  <= encrypted_wire[8];
+	        encrypted_reg[9]  <= encrypted_wire[9];
+	        encrypted_reg[10] <= encrypted_wire[10];
+	        encrypted_reg[11] <= encrypted_wire[11];
+	        encrypted_reg[12] <= encrypted_wire[12];
+	        encrypted_reg[13] <= encrypted_wire[13];
+	        encrypted_reg[14] <= encrypted_wire[14];
+	        encrypted_reg[15] <= encrypted_wire[15];
+	    end
 	end
-
+	
 	// sends out encrypted
    always @(*) begin
         if (done_q && output_sel)
