@@ -4,7 +4,7 @@
 # defaults
 SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
-TOPLEVEL_LANG ?= verilog
+TOPLEVEL_LANG ?= vhdl
 SRC_DIR = $(PWD)/../src
 PROJECT_SOURCES = addroundkey.v \
                   mixcolumns_one_column.v \
