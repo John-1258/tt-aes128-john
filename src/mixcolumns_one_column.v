@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module mixcolumns_one_column ( 
 	input  wire [31:0] col_in, 
 	output wire [31:0] col_out 
@@ -17,12 +15,6 @@ module mixcolumns_one_column (
 	assign m2 = s0 ^ s1 ^ xtime(s2) ^ (xtime(s3) ^ s3); 
 	assign m3 = (xtime(s0) ^ s0) ^ s1 ^ s2 ^ xtime(s3); 
 	assign col_out = {m0, m1, m2, m3}; 
-
-	initial begin
-    #46;
-    $display("col_in=%h s0=%h s1=%h s2=%h s3=%h m0=%h m1=%h m2=%h m3=%h col_out=%h",
-              col_in, s0, s1, s2, s3, m0, m1, m2, m3, col_out);
-end
 	
 	function [7:0] xtime; 
 		input [7:0] b; 
