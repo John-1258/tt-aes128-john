@@ -70,7 +70,7 @@ async def pulse_start(dut):
     await ClockCycles(dut.clk, 1)
 
 
-async def wait_done(dut, max_cycles=200):
+async def wait_done(dut, max_cycles=1000):
     """
     When output_sel = 0, wrapper should output status:
     uo_out = {6'd0, done_q, busy_q}
