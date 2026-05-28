@@ -31,7 +31,6 @@ project:
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
-pinout:
   # Inputs
   ui[0]: "BIT[0]"
   ui[1]: "BIT[1]"
@@ -61,8 +60,6 @@ pinout:
   uio[5]: "WRITE_ENABLE"
   uio[6]: "START"
   uio[7]: "OUTPUT_SELECT"
-  
-
 
 # Do not change!
 yaml_version: 6
