@@ -1,13 +1,11 @@
 module main (
-
-	input clk,
-	input start,
-	
-	input [127:0] data_in,
-	input [127:0] key_in,
-	
-	output [127:0] result_out,
-	output done
+    input clk,
+    input rst_n,
+    input start,
+    input [127:0] data_in,
+    input [127:0] key_in,
+    output [127:0] result_out,
+    output done
 );
 
 	reg [3:0] round;
@@ -36,26 +34,20 @@ module main (
 	assign completed = (round == 4'd10);
 	assign round_next = completed ? 4'd0 : (round + 4'd1);
 	assign round_last = (round == 4'd10);
-	
-	always @(posedge clk) begin
-		//check if round is zero
-		if ( (|round) || start )
-			round <= round_next;
 		
-		if (start)
-			//round start with one add round key
-			
-			next_reg <= data_in ^ key_in;
-		else if (|round)
-			next_reg <= data_next;
-			
-//		   $display("time=%0t round=%0d start=%b next_reg=%h data_next=%h", 
-//         			$time, round, start, next_reg, data_next);
-//			$display("subbyte=%h shiftrow=%h mixcol=%h roundkey=%h", 
-//						subbyte_val, shiftrow_val, mixcol_val, current_key);
-//			$display("current_key=%h next_key=%h", current_key, next_key);
-//			$display("current_key=%h roundkey=%h mixcol XOR current_key=%h", 
-//						current_key, round_key, mixcol_val ^ current_key);
+	always @(posedge clk) begin
+		if (!rst_n) begin
+			round    <= 4'd0;
+			next_reg <= 128'd0;
+		end else begin
+			if ((|round) || start)
+				round <= round_next;
+
+			if (start)
+				next_reg <= data_in ^ key_in;
+			else if (|round)
+				next_reg <= data_next;
+		end
 	end
 	
 	subbyte subbyte1(.wordin(next_reg), .wordout(subbyte_val));
@@ -73,8 +65,12 @@ module main (
 					  : (mixcol_val ^ current_key);
 
 	always @(posedge clk) begin
-		if ( (|round) || start )
-			key_reg <= next_key;
+		if (!rst_n) begin
+			key_reg <= 128'd0;
+		end else begin
+			if ((|round) || start)
+				key_reg <= next_key;
+		end
 	end
 	key_gen key_gen1(.round(round + 4'd1), .keyin(current_key), .keyout(next_key));
 	
