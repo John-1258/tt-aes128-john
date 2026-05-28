@@ -1,4 +1,4 @@
-module tt_AES128 (
+module tt_um_AES128 (
     input  wire [7:0] ui_in,
     output reg  [7:0] uo_out,
     input  wire [7:0] uio_in,
