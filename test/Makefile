@@ -17,7 +17,8 @@ VERILOG_SOURCES = $(SRC_DIR)/tt_um_AES128.v \
                   $(SRC_DIR)/sbox.v \
                   $(SRC_DIR)/shiftrows.v \
                   $(SRC_DIR)/subbyte.v \
-                  $(SRC_DIR)/subword.v
+                  $(SRC_DIR)/subword.v \
+				  $(SRC_DIR)/main.v
 
 TB_VERILOG = $(PWD)/AES128_tb.v
 
