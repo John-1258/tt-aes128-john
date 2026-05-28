@@ -1,13 +1,11 @@
 module main (
-
-	input clk,
-	input start,
-	
-	input [127:0] data_in,
-	input [127:0] key_in,
-	
-	output [127:0] result_out,
-	output done
+    input clk,
+    input rst_n,
+    input start,
+    input [127:0] data_in,
+    input [127:0] key_in,
+    output [127:0] result_out,
+    output done
 );
 
 	reg [3:0] round;
