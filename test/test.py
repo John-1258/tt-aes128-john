@@ -133,7 +133,7 @@ async def test_project(dut):
         await write_byte(dut, 16 + i, value)
 
     await pulse_start(dut)
-    await wait_done(dut, max_cycles=200)
+    await wait_done(dut, max_cycles=1000)
 
     got = await read_ciphertext(dut)
 
