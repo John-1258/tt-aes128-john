@@ -9,11 +9,11 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+AES-128 operations
 
 ## How to test
 
-Explain how to use your project
+Using 10 unique plaintext and key combinations, and comparing with actual encryption values
 
 ## External hardware
 
