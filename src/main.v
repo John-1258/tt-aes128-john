@@ -32,12 +32,6 @@ module main (
 	wire [31:0] col0_in, col1_in, col2_in, col3_in;
 	wire [31:0] col0_out, col1_out, col2_out, col3_out;
 	
-	initial begin
-		round = 4'd0;
-		next_reg = 128'd0;
-		key_reg = 128'd0;
-	end
-	
 	//the complete round is at 10
 	assign completed = (round == 4'd10);
 	assign round_next = completed ? 4'd0 : (round + 4'd1);
@@ -70,13 +64,13 @@ module main (
 
 	mixcolumns_one_column mix_0 (.col_in(shiftrow_val[127:96]), .col_out(mixcol_val[127:96]));
 	mixcolumns_one_column mix_1 (.col_in(shiftrow_val[95:64]), .col_out(mixcol_val[95:64]));
-   mixcolumns_one_column mix_2 (.col_in(shiftrow_val[63:32]), .col_out(mixcol_val[63:32]));
-   mixcolumns_one_column mix_3 (.col_in(shiftrow_val[31:0]), .col_out(mixcol_val[31:0]));	 
+	mixcolumns_one_column mix_2 (.col_in(shiftrow_val[63:32]), .col_out(mixcol_val[63:32]));
+	mixcolumns_one_column mix_3 (.col_in(shiftrow_val[31:0]), .col_out(mixcol_val[31:0]));	 
 
 	//check what key we using
 	assign current_key = start ? key_in : key_reg;
 	assign data_next = round_last ? (shiftrow_val ^ current_key)
-						  : (mixcol_val ^ current_key);
+					  : (mixcol_val ^ current_key);
 
 	always @(posedge clk) begin
 		if ( (|round) || start )
