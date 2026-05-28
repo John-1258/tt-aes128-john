@@ -77,12 +77,15 @@ module aes128_top_test;
             $finish;
         end
 
+        scan_data = 1; scan_key = 1; scan_exp = 1;
+
         // Read and process each test vector
-        while (!$feof(data_in_file) && !$feof(key_file) && !$feof(expected_out_file)) begin
-            // Read hex values from files
+        while (!$feof(data_in_file) && !$feof(key_file) && !$feof(expected_out_file)
+               && scan_data == 1 && scan_key == 1 && scan_exp == 1) begin
+
             scan_data = $fscanf(data_in_file, "%h", data_in_vec);
-            scan_key = $fscanf(key_file, "%h", key_vec);
-            scan_exp = $fscanf(expected_out_file, "%h", expected_out_vec);
+            scan_key  = $fscanf(key_file,     "%h", key_vec);
+            scan_exp  = $fscanf(expected_out_file, "%h", expected_out_vec);
 
             if (scan_data != 1 || scan_key != 1 || scan_exp != 1) begin
                 break;
