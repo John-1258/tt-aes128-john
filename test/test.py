@@ -72,7 +72,7 @@ async def pulse_start(dut):
 
 async def wait_done(dut, max_cycles=1000):
     """
-    When output_sel = 0, wrapper should output status:
+    When output_sel = 0:
     uo_out = {6'd0, done_q, busy_q}
 
     bit 0 = busy
@@ -85,14 +85,18 @@ async def wait_done(dut, max_cycles=1000):
         await Timer(1, units="ns")
 
         status = int(dut.uo_out.value)
-        dut._log.info(f"cycle={cycle}, status=0x{status:02x}")
+        busy = status & 0x01
+        done = (status >> 1) & 0x01
 
-        if status == 0x01:
+        dut._log.info(
+            f"cycle={cycle}, status=0x{status:02x}, busy={busy}, done={done}"
+        )
+
+        if done == 1:
             dut._log.info("AES encryption completed")
             return
 
     raise AssertionError("AES did not finish within max_cycles")
-
 
 async def read_ciphertext(dut):
     result = []
