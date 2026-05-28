@@ -21,7 +21,7 @@ module aes128_top_test;
     reg sim_done;
 
     // Instantiate the module under test
-    tt_AES128 uut (
+    tt_um_AES128 uut (
         .ui_in(ui_in),
         .uo_out(uo_out),
         .uio_in(uio_in),
