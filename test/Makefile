@@ -1,46 +1,35 @@
-# Makefile
-# Verilog testbench for AES128 design
+# SPDX-FileCopyrightText: © 2024 Tiny Tapeout
+# SPDX-License-Identifier: Apache-2.0
 
-SIM ?= iverilog
-VVP ?= vvp
-VERILOG_STANDARD ?= -g2009
+# Cocotb Makefile for AES128 Tiny Tapeout wrapper
+
+SIM ?= icarus
+TOPLEVEL_LANG ?= verilog
 
 # Source directory
 SRC_DIR = $(PWD)/../src
 
 # Verilog sources
-VERILOG_SOURCES = $(SRC_DIR)/tt_um_AES128.v \
-                  $(SRC_DIR)/addroundkey.v \
-                  $(SRC_DIR)/mixcolumns_one_column.v \
-                  $(SRC_DIR)/rcon.v \
-                  $(SRC_DIR)/rotword.v \
-                  $(SRC_DIR)/sbox.v \
-                  $(SRC_DIR)/shiftrows.v \
-                  $(SRC_DIR)/subbyte.v \
-                  $(SRC_DIR)/subword.v \
-				  $(SRC_DIR)/main.v
+VERILOG_SOURCES += $(PWD)/tb.v
+VERILOG_SOURCES += $(SRC_DIR)/tt_um_AES128.v
+VERILOG_SOURCES += $(SRC_DIR)/addroundkey.v
+VERILOG_SOURCES += $(SRC_DIR)/mixcolumns_one_column.v
+VERILOG_SOURCES += $(SRC_DIR)/rcon.v
+VERILOG_SOURCES += $(SRC_DIR)/rotword.v
+VERILOG_SOURCES += $(SRC_DIR)/sbox.v
+VERILOG_SOURCES += $(SRC_DIR)/shiftrows.v
+VERILOG_SOURCES += $(SRC_DIR)/subbyte.v
+VERILOG_SOURCES += $(SRC_DIR)/subword.v
+VERILOG_SOURCES += $(SRC_DIR)/main.v
 
-TB_VERILOG = $(PWD)/AES128_tb.v
+# Top-level Verilog testbench module
+TOPLEVEL = tb
 
-# Test vectors directory
-VECTORS_DIR = $(PWD)/vectors
+# Cocotb Python test file name without .py
+# This means cocotb will run test/test.py
+MODULE = test
 
-# Output directory
-SIM_DIR = sim_build
+# Extra compile arguments for Icarus Verilog
+COMPILE_ARGS += -g2009
 
-# Default target
-all: compile run
-
-compile:
-	@echo "Compiling Verilog files..."
-	$(SIM) $(VERILOG_STANDARD) -o $(SIM_DIR)/tb $(VERILOG_SOURCES) $(TB_VERILOG)
-
-run: compile
-	@echo "Running simulation..."
-	$(VVP) $(SIM_DIR)/tb
-
-clean:
-	@echo "Cleaning up..."
-	rm -rf $(SIM_DIR)
-
-.PHONY: all compile run clean
+include $(shell cocotb-config --makefiles)/Makefile.sim
