@@ -1,54 +1,49 @@
 # Makefile
-# See https://docs.cocotb.org/en/stable/quickstart.html for more info
+# VHDL testbench for AES128 design
 
-# defaults
-SIM ?= icarus
-FST ?= -fst # Use more efficient FST format
-TOPLEVEL_LANG ?= vhdl
+SIM ?= ghdl
+VHDL_STANDARD ?= 08
+
+# Source directory
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = addroundkey.v \
-                  mixcolumns_one_column.v \
-                  sbox.v \
-                  shiftrows.v \
-                  subbyte.v \
-                  subword.v \
-                  rotword.v \
-                  rcon.v \
-                  main.v \
-                  tt_AES128.v
 
-ifneq ($(GATES),yes)
+# VHDL sources
+VHDL_SOURCES = $(SRC_DIR)/tt_AES128.vhd
+TB_VHDL = $(PWD)/AES128_tb.vhd
 
-# RTL simulation:
-SIM_BUILD				= sim_build/rtl
-VERILOG_SOURCES += $(addprefix $(SRC_DIR)/,$(PROJECT_SOURCES))
+# Test vectors directory
+VECTORS_DIR = $(PWD)/vectors
 
-else
+# Output directory
+SIM_DIR = sim_build
 
-# Gate level simulation:
-SIM_BUILD				= sim_build/gl
-COMPILE_ARGS    += -DGL_TEST
-COMPILE_ARGS    += -DFUNCTIONAL
-COMPILE_ARGS    += -DUSE_POWER_PINS
-COMPILE_ARGS    += -DSIM
-COMPILE_ARGS    += -DUNIT_DELAY=\#1
-VERILOG_SOURCES += $(PDK_ROOT)/sky130A/libs.ref/sky130_fd_sc_hd/verilog/primitives.v
-VERILOG_SOURCES += $(PDK_ROOT)/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v
+# GHDL flags
+GHDL_FLAGS = --std=$(VHDL_STANDARD) -g
 
-# this gets copied in by the GDS action workflow
-VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
+# Default target
+all: compile run
 
-endif
+compile:
+	@echo "Compiling VHDL files..."
+	ghdl analyze $(GHDL_FLAGS) $(VHDL_SOURCES) $(TB_VHDL)
 
-# Allow sharing configuration between design and testbench via `include`:
-COMPILE_ARGS 		+= -I$(SRC_DIR)
+elaborate:
+	@echo "Elaborating design..."
+	ghdl elaborate $(GHDL_FLAGS) aes128_top_test -o $(SIM_DIR)/tb
 
-# Include the testbench sources:
-VHDL_SOURCES += $(PWD)/AES128_tb.vhd
-TOPLEVEL = aes128_top_test
+run: elaborate
+	@echo "Running simulation..."
+	ghdl run $(GHDL_FLAGS) aes128_top_test \
+		--vcd=$(SIM_DIR)/tb.vcd \
+		--stop-time=10ms
 
-# List test modules to run, separated by commas and without the .py suffix:
-COCOTB_TEST_MODULES = test
+view:
+	@echo "Opening waveform viewer..."
+	gtkwave $(SIM_DIR)/tb.vcd &
 
-# include cocotb's make rules to take care of the simulator setup
-include $(shell cocotb-config --makefiles)/Makefile.sim
+clean:
+	@echo "Cleaning up..."
+	rm -rf $(SIM_DIR)
+	ghdl clean
+
+.PHONY: all compile elaborate run view clean
