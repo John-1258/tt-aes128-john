@@ -22,6 +22,8 @@ module tt_um_AES128 (
     wire       output_sel = uio_in[7];
 	 
     integer i;
+	integer k;
+	integer m;
     genvar  j;
 
     // flatten plaintext and key
@@ -98,10 +100,10 @@ module tt_um_AES128 (
 	// gets encrypted
 	always @(posedge clk or negedge rst_n) begin
 		 if (!rst_n) begin
-			  for (i = 0; i < 16; i = i+1)
+			 for (m = 0; m < 16; m = m+1)
 					encrypted_reg[i] <= 8'd0;
 		 end else if (done_w_d) begin
-			  for (i = 0; i < 16; i = i+1)
+			 for (k = 0; k < 16; k = k+1)
 					encrypted_reg[i] <= encrypted_wire[i];
 		 end
 	end
