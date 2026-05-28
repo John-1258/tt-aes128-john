@@ -39,14 +39,15 @@ module tt_um_AES128 (
     reg  start_q, busy_q, done_q, done_w_d;
     wire done_w;
 
-    main main1 (
-        .clk       (clk),
-        .start     (start_q),
-        .data_in   (plaintext_flat),
-        .key_in    (key_flat),
-        .result_out(encrypted_flat),
-        .done      (done_w)
-    );
+	main main1 (
+	    .clk       (clk),
+	    .rst_n     (rst_n),
+	    .start     (start_q),
+	    .data_in   (plaintext_flat),
+	    .key_in    (key_flat),
+	    .result_out(encrypted_flat),
+	    .done      (done_w)
+	);
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
